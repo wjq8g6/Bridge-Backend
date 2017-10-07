@@ -4,7 +4,7 @@ import numpy as np
 from firebase import firebase
 app = Flask(__name__)
 
-@app.route("/init")
+@app.route("/")
 def init():
     global fb
     aut = firebase.FirebaseAuthentication('hY5kvBhsK4MZbShXIxeMEo0rOWyfL7LdW5TC95Od', 'wjq8g6@gmail.com')
@@ -46,7 +46,11 @@ def getNN(id, class_name, num_ret):
                 stuids.append(i)
                 dists.append(calDist(stu,target))
     if num_ret > len(dists):
-        return str(stuids)
+        ret = ''
+        for j in stuids:
+            ret += str(j) + ','
+        ret = ret[:-1]
+        return ret
     else:
         ind = np.argpartition(dists, num_ret)[:num_ret]
         ret = ''
