@@ -11,6 +11,8 @@ def init():
     fb = firebase.FirebaseApplication('https://bridge-fb5ab.firebaseio.com', aut)
     global data
     data = fb.get("", None)
+    global num_students
+    num_students = len(data)
     return "Finished Initialization"
 
 @app.route("/name/<int:name_id>")
@@ -21,24 +23,27 @@ def get_name(name_id):
 def returnIDs(id):
     return data[id]
 
-'''
-@app.route("/adduser/<string:info>")
-def addStu(info):
-    data = pd.read_csv('data.csv')
-    lst = info.split(",")
-    df_new = pd.DataFrame([lst], columns = data.columns)
-    data = data.append(df_new)
-    data.to_csv("data.csv",index = False)
+
+@app.route("/adduser/<string:info>/<string:classes>")
+def addStu(info,classes):
+    headers = ['Name','Email','Year','Gender','Ethnicity','Major']
+    stu_info = info.split(",")
+    courses = classes.split(",")
+    dict = {headers[i]:stu_info[i] for i in range(len(headers))}
+    dict_class = {courses[k]:1 for k in range(len(courses))}
+    dict['Courses'] = dict_class
+    fb.put("",str(num_students),dict)
+    num_students+=1
     return "Success"
-'''
 
 
-@app.route("/getnn/<int:id>/<string:class_name>/<int:num_ret>")
+
+@app.route("/getSim/<int:id>/<string:class_name>/<int:num_ret>")
 def getNN(id, class_name, num_ret):
     stuids = []
     dists = []
     target = data[id]
-    for i in range(len(data)):
+    for i in range(num_students):
         if i != id:
             stu = data[i]
             courses = stu['Courses']
@@ -59,6 +64,18 @@ def getNN(id, class_name, num_ret):
         ret = ret[:-1]
         return ret
 
+@app.route("/common/<int:stu>/<int:target>")
+def commonTraits(stu, target):
+    headers = ['Year', 'Gender', 'Ethnicity', 'Major']
+    common = []
+    for head in headers:
+        if stu[head] == target[head]:
+            common.append(head)
+    s1 = set(stu['Courses'])
+    s2 = set(target['Courses'])
+    for i in s1.intersection(s2):
+        common.append(i)
+    return common
 
 def calDist(stu, target):
     headers = ['Year','Gender','Ethnicity','Major']
