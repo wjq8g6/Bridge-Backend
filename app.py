@@ -64,7 +64,7 @@ def addStu(info,classes):
     dict['Courses'] = dict_class
     fb.put("",str(num_students),dict)
     num_students+=1
-    return "Success"
+    return str(num_students-1)
 
 
 
