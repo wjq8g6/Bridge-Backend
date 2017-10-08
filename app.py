@@ -4,6 +4,7 @@ import numpy as np
 from firebase import firebase
 app = Flask(__name__)
 
+
 @app.route("/")
 def init():
     global fb
@@ -26,6 +27,7 @@ def returnIDs(id):
 
 @app.route("/adduser/<string:info>/<string:classes>")
 def addStu(info,classes):
+    data = fb.get("", None)
     num_students = len(data)
     headers = ['Name','Email','Year','Gender','Ethnicity','Major']
     stu_info = info.split(",")
