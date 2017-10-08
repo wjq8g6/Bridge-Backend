@@ -17,15 +17,40 @@ def init():
     num_students = len(data)
     return "Finished Initialization"
 
-@app.route("/name/<int:name_id>")
-def get_name(name_id):
+@app.route("/name/<int:id>")
+def get_name(id):
     global data
-    return data[name_id].get('Name')
+    return data[id].get('Name')
 
-@app.route("/info/<int:id>")
-def returnIDs(id):
+@app.route("/email/<int:id>")
+def get_email(id):
     global data
-    return data[id]
+    return data[id].get('Email')
+
+@app.route("/year/<int:id>")
+def get_year(id):
+    global data
+    return data[id].get('Year')
+
+@app.route("/gender/<int:id>")
+def get_gender(id):
+    global data
+    return data[id].get('Gender')
+
+@app.route("/major/<int:id>")
+def get_major(id):
+    global data
+    return data[id].get('Major')
+
+@app.route("/courses/<int:id>")
+def get_courses(id):
+    global data
+    lst = data[id].get('Courses')
+    ret = ""
+    for i in lst:
+        ret += i + ','
+    ret = ret[:-1]
+    return ret
 
 
 @app.route("/adduser/<string:info>/<string:classes>")
