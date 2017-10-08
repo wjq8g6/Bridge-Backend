@@ -168,7 +168,10 @@ def addWeights(id, id_clicked):
         fb.put('weights',str(id),weights)
     else:
         for i in commonTraitsVec(id,id_clicked):
-            weights_vec[i] += 1
+            if i in weights_vec:
+                weights_vec[i] += 1
+            else:
+                weights_vec[i] = 2
         fb.put('weights',str(id),weights_vec)
     return "done"
 
