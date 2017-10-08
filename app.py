@@ -73,12 +73,36 @@ def addStu(info,classes):
     return str(num_students-1)
 
 
+def calDist(stu, target, weights):
+    init()
+    headers = ['Gender','Ethnicity','Major']
+    dist = 0
+    if weights == None:
+        for head in headers:
+            if stu[head] == target[head]:
+                dist += 1
+        s1 = set(stu['Courses'])
+        s2 = set(target['Courses'])
+        dist += len(s1.intersection(s2))
+    else:
+        for head in headers:
+            if stu[head] == target[head]:
+                if head in weights:
+                    dist += weights[head]
+                else:
+                    dist += 1
+        s1 = set(stu['Courses'])
+        s2 = set(target['Courses'])
+        dist += len(s1.intersection(s2))
+    return dist
 
 @app.route("/getSim/<int:id>/<string:class_name>/<int:num_ret>")
 def getNN(id, class_name, num_ret):
     init()
     global data
     global num_students
+    global fb
+    weights_vec = fb.get('weights', str(id))
     stuids = []
     dists = []
     target = data[id]
@@ -87,12 +111,12 @@ def getNN(id, class_name, num_ret):
             stu = data[i]
             courses = stu['Courses']
             if class_name in courses:
-                print(i)
                 stuids.append(i)
-                dists.append(calDist(stu,target))
+                dists.append(calDist(stu,target,weights_vec))
     if num_ret > len(dists):
         num_ret = len(dists)-1
-    ind = np.argpartition(dists, num_ret)[:num_ret]
+    arr = np.array(dists)
+    ind = arr.argsort()[-num_ret:][::-1]
     ret = ''
     for k in ind:
         ret += str(stuids[k])+','
@@ -117,14 +141,34 @@ def commonTraits(id1, id2):
     ret = ret[:-1]
     return ret
 
-def calDist(stu, target):
+def commonTraitsVec(id1, id2):
     init()
-    headers = ['Gender','Ethnicity','Major']
-    dist = 0
+    global data
+    stu = data[id2]
+    target = data[id1]
+    headers = ['Year', 'Gender', 'Ethnicity', 'Major']
+    ret = ''
     for head in headers:
-        if stu[head] != target[head]:
-            dist += 2
+        if stu[head] == target[head]:
+            ret += head + ","
     s1 = set(stu['Courses'])
     s2 = set(target['Courses'])
-    dist += 16 - len(s1.intersection(s2))
-    return dist
+    return list(s1.intersection(s2))
+
+
+@app.route("/addweights/<int:id>/<int:id_clicked>")
+def addWeights(id, id_clicked):
+    init()
+    global fb
+    weights_vec = fb.get('weights',str(id))
+    if weights_vec == None:
+        weights = {}
+        for i in commonTraitsVec(id,id_clicked):
+            weights[i] = 2
+        fb.put('weights',str(id),weights)
+    else:
+        for i in commonTraitsVec(id,id_clicked):
+            weights_vec[i] += 1
+        fb.put('weights', str(id), weights_vec)
+
+
