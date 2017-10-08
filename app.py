@@ -87,21 +87,17 @@ def getNN(id, class_name, num_ret):
             stu = data[i]
             courses = stu['Courses']
             if class_name in courses:
+                print(i)
                 stuids.append(i)
                 dists.append(calDist(stu,target))
     if num_ret > len(dists):
-        ret = ''
-        for j in stuids:
-            ret += str(j) + ','
-        ret = ret[:-1]
-        return ret
-    else:
-        ind = np.argpartition(dists, num_ret)[:num_ret]
-        ret = ''
-        for k in ind:
-            ret += str(stuids[k])+','
-        ret = ret[:-1]
-        return ret
+        num_ret = len(dists)-1
+    ind = np.argpartition(dists, num_ret)[:num_ret]
+    ret = ''
+    for k in ind:
+        ret += str(stuids[k])+','
+    ret = ret[:-1]
+    return ret
 
 @app.route("/common/<int:id1>/<int:id2>")
 def commonTraits(id1, id2):
