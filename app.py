@@ -57,7 +57,7 @@ def get_courses(id):
     ret = ret[:-1]
     return ret
 
-@app.route("/info/<int:id")
+@app.route("/info/<int:id>")
 def get_info(id):
     init()
     global data
