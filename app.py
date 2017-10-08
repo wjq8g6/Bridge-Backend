@@ -102,15 +102,16 @@ def commonTraits(id1, id2):
     stu = data[id2]
     target = data[id1]
     headers = ['Year', 'Gender', 'Ethnicity', 'Major']
-    common = []
+    ret = ''
     for head in headers:
         if stu[head] == target[head]:
-            common.append(head)
+            ret += head + ","
     s1 = set(stu['Courses'])
     s2 = set(target['Courses'])
     for i in s1.intersection(s2):
-        common.append(i)
-    return common
+        ret += i + ','
+    ret = ret[:-1]
+    return ret
 
 def calDist(stu, target):
     headers = ['Gender','Ethnicity','Major']
