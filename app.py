@@ -19,7 +19,7 @@ def init():
 
 @app.route("/name/<int:name_id>")
 def get_name(name_id):
-    return data['Name'][name_id]
+    return data[name_id].get('Name')
 
 @app.route("/info/<int:id>")
 def returnIDs(id):
