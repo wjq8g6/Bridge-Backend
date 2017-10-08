@@ -26,6 +26,7 @@ def returnIDs(id):
 
 @app.route("/adduser/<string:info>/<string:classes>")
 def addStu(info,classes):
+    num_students = len(data)
     headers = ['Name','Email','Year','Gender','Ethnicity','Major']
     stu_info = info.split(",")
     courses = classes.split(",")
