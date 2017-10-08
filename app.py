@@ -11,7 +11,7 @@ def init():
     aut = firebase.FirebaseAuthentication('hY5kvBhsK4MZbShXIxeMEo0rOWyfL7LdW5TC95Od', 'wjq8g6@gmail.com')
     fb = firebase.FirebaseApplication('https://bridge-fb5ab.firebaseio.com', aut)
     global data
-    data = fb.get("", None)
+    data = fb.get("students", None)
     global num_students
     num_students = 0
     num_students = len(data)
@@ -62,7 +62,7 @@ def addStu(info,classes):
     dict = {headers[i]:stu_info[i] for i in range(len(headers))}
     dict_class = {courses[k]:1 for k in range(len(courses))}
     dict['Courses'] = dict_class
-    fb.put("",str(num_students),dict)
+    fb.put("students",str(num_students),dict)
     num_students+=1
     return str(num_students-1)
 
