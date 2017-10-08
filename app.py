@@ -147,13 +147,13 @@ def commonTraitsVec(id1, id2):
     stu = data[id2]
     target = data[id1]
     headers = ['Year', 'Gender', 'Ethnicity', 'Major']
-    ret = ''
+    lst = []
     for head in headers:
         if stu[head] == target[head]:
-            ret += head + ","
+            lst.append(head)
     s1 = set(stu['Courses'])
     s2 = set(target['Courses'])
-    return list(s1.intersection(s2))
+    return list(s1.intersection(s2)) + lst
 
 
 @app.route("/addweights/<int:id>/<int:id_clicked>")
