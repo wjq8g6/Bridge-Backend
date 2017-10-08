@@ -96,8 +96,11 @@ def getNN(id, class_name, num_ret):
         ret = ret[:-1]
         return ret
 
-@app.route("/common/<int:stu>/<int:target>")
-def commonTraits(stu, target):
+@app.route("/common/<int:id1>/<int:id2>")
+def commonTraits(id1, id2):
+    global data
+    stu = data[id2]
+    target = data[id1]
     headers = ['Year', 'Gender', 'Ethnicity', 'Major']
     common = []
     for head in headers:
