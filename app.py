@@ -19,31 +19,37 @@ def init():
 
 @app.route("/name/<int:id>")
 def get_name(id):
+    init()
     global data
     return data[id].get('Name')
 
 @app.route("/email/<int:id>")
 def get_email(id):
+    init()
     global data
     return data[id].get('Email')
 
 @app.route("/year/<int:id>")
 def get_year(id):
+    init()
     global data
     return data[id].get('Year')
 
 @app.route("/gender/<int:id>")
 def get_gender(id):
+    init()
     global data
     return data[id].get('Gender')
 
 @app.route("/major/<int:id>")
 def get_major(id):
+    init()
     global data
     return data[id].get('Major')
 
 @app.route("/courses/<int:id>")
 def get_courses(id):
+    init()
     global data
     lst = data[id].get('Courses')
     ret = ""
@@ -55,6 +61,7 @@ def get_courses(id):
 
 @app.route("/adduser/<string:info>/<string:classes>")
 def addStu(info,classes):
+    init()
     global num_students
     headers = ['Name','Email','Year','Gender','Ethnicity','Major']
     stu_info = info.split(",")
@@ -70,6 +77,7 @@ def addStu(info,classes):
 
 @app.route("/getSim/<int:id>/<string:class_name>/<int:num_ret>")
 def getNN(id, class_name, num_ret):
+    init()
     global data
     global num_students
     stuids = []
@@ -98,6 +106,7 @@ def getNN(id, class_name, num_ret):
 
 @app.route("/common/<int:id1>/<int:id2>")
 def commonTraits(id1, id2):
+    init()
     global data
     stu = data[id2]
     target = data[id1]
@@ -114,6 +123,7 @@ def commonTraits(id1, id2):
     return ret
 
 def calDist(stu, target):
+    init()
     headers = ['Gender','Ethnicity','Major']
     dist = 0
     for head in headers:
