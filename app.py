@@ -48,7 +48,7 @@ def getNN(id, class_name, num_ret):
         if i != id:
             stu = data[i]
             courses = stu['Courses']
-            if class_name in courses:
+            if class_name in courses and int(stu['Year']) > int(target['Year']):
                 stuids.append(i)
                 dists.append(calDist(stu,target))
     if num_ret > len(dists):
@@ -79,11 +79,11 @@ def commonTraits(stu, target):
     return common
 
 def calDist(stu, target):
-    headers = ['Year','Gender','Ethnicity','Major']
+    headers = ['Gender','Ethnicity','Major']
     dist = 0
     for head in headers:
         if stu[head] != target[head]:
-            dist += 1
+            dist += 2
     s1 = set(stu['Courses'])
     s2 = set(target['Courses'])
     dist += 16 - len(s1.intersection(s2))
