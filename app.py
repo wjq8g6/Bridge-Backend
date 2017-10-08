@@ -48,7 +48,7 @@ def getNN(id, class_name, num_ret):
         if i != id:
             stu = data[i]
             courses = stu['Courses']
-            if class_name in courses and int(stu['Year']) > int(target['Year']):
+            if class_name in courses and int(stu['Year']) < int(target['Year']):
                 stuids.append(i)
                 dists.append(calDist(stu,target))
     if num_ret > len(dists):
