@@ -13,7 +13,6 @@ def init():
     global data
     data = fb.get("students", None)
     global num_students
-    num_students = 0
     num_students = len(data)
     return "Finished Initialization"
 
@@ -65,7 +64,7 @@ def addStu(info,classes):
     global num_students
     headers = ['Name','Email','Year','Gender','Ethnicity','Major']
     stu_info = info.split(",")
-    courses = classes.split(",")
+    courses = classes.split(", ")
     dict = {headers[i]:stu_info[i] for i in range(len(headers))}
     dict_class = {courses[k]:1 for k in range(len(courses))}
     dict['Courses'] = dict_class
