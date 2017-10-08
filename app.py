@@ -19,10 +19,12 @@ def init():
 
 @app.route("/name/<int:name_id>")
 def get_name(name_id):
+    global data
     return data[name_id].get('Name')
 
 @app.route("/info/<int:id>")
 def returnIDs(id):
+    global data
     return data[id]
 
 
@@ -43,6 +45,8 @@ def addStu(info,classes):
 
 @app.route("/getSim/<int:id>/<string:class_name>/<int:num_ret>")
 def getNN(id, class_name, num_ret):
+    global data
+    global num_students
     stuids = []
     dists = []
     target = data[id]
