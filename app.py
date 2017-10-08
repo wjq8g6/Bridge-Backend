@@ -13,6 +13,7 @@ def init():
     global data
     data = fb.get("", None)
     global num_students
+    num_students = 0
     num_students = len(data)
     return "Finished Initialization"
 
@@ -27,8 +28,7 @@ def returnIDs(id):
 
 @app.route("/adduser/<string:info>/<string:classes>")
 def addStu(info,classes):
-    data = fb.get("", None)
-    num_students = len(data)
+    global num_students
     headers = ['Name','Email','Year','Gender','Ethnicity','Major']
     stu_info = info.split(",")
     courses = classes.split(",")
