@@ -62,12 +62,10 @@ def get_info(id):
     init()
     global data
     lst = data[id]
-    headers = ['Name', 'Email', 'Year', 'Gender', 'Ethnicity', 'Major']
+    headers = ['Name', 'Year', 'Email']
     ret = ""
     for he in headers:
         ret += lst[he] + ","
-    for i in lst['Courses']:
-        ret += i + ','
     ret = ret[:-1]
     return ret
 
