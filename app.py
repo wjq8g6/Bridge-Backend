@@ -115,6 +115,11 @@ def getNN(id, class_name, num_ret):
     global num_students
     global fb
     weights_vec = fb.get('weights', str(id))
+    class_list = []
+    if ',' in class_name:
+        class_list = class_name.split(', ')
+    else:
+        class_list = [class_name]
     stuids = []
     dists = []
     target = data[id]
@@ -122,7 +127,7 @@ def getNN(id, class_name, num_ret):
         if i != id:
             stu = data[i]
             courses = stu['Courses']
-            if class_name in courses:
+            if all(clas in courses for clas in class_list):
                 stuids.append(i)
                 dists.append(calDist(stu,target,weights_vec))
     if num_ret > len(dists):
@@ -134,6 +139,7 @@ def getNN(id, class_name, num_ret):
         ret += str(stuids[k])+','
     ret = ret[:-1]
     return ret
+
 
 @app.route("/common/<int:id1>/<int:id2>")
 def commonTraits(id1, id2):
