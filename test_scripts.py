@@ -1,11 +1,8 @@
-from flask import Flask, json
+
 import pandas as pd
 import numpy as np
 from firebase import firebase
-app = Flask(__name__)
 
-
-@app.route("/")
 def init():
     global fb
     aut = firebase.FirebaseAuthentication('hY5kvBhsK4MZbShXIxeMEo0rOWyfL7LdW5TC95Od', 'wjq8g6@gmail.com')
@@ -16,61 +13,9 @@ def init():
     num_students = len(data)
     return "Finished Initialization"
 
-@app.route("/name/<int:id>")
-def get_name(id):
-    init()
-    global data
-    return data[id].get('Name')
-
-@app.route("/email/<int:id>")
-def get_email(id):
-    init()
-    global data
-    return data[id].get('Email')
-
-@app.route("/year/<int:id>")
-def get_year(id):
-    init()
-    global data
-    return data[id].get('Year')
-
-@app.route("/gender/<int:id>")
-def get_gender(id):
-    init()
-    global data
-    return data[id].get('Gender')
-
-@app.route("/major/<int:id>")
-def get_major(id):
-    init()
-    global data
-    return data[id].get('Major')
-
-@app.route("/courses/<int:id>")
-def get_courses(id):
-    init()
-    global data
-    lst = data[id].get('Courses')
-    ret = ""
-    for i in lst:
-        ret += i + ','
-    ret = ret[:-1]
-    return ret
-
-@app.route("/info/<int:id>")
-def get_info(id):
-    init()
-    global data
-    lst = data[id]
-    headers = ['Name', 'Year', 'Email']
-    ret = ""
-    for he in headers:
-        ret += lst[he] + ","
-    ret = ret[:-1]
-    return ret
 
 
-@app.route("/adduser/<string:info>/<string:classes>")
+
 def addStu(info,classes):
     init()
     global num_students
@@ -85,7 +30,31 @@ def addStu(info,classes):
     return str(num_students-1)
 
 
-def calDist(stu, target, weights):
+
+def getNN(id, class_name, num_ret):
+    init()
+    global data
+    global num_students
+    stuids = []
+    dists = []
+    target = data[id]
+    for i in range(num_students):
+        if i != id:
+            stu = data[i]
+            courses = stu['Courses']
+            if class_name in courses:
+                stuids.append(i)
+                dists.append(calDist(stu,target))
+    if num_ret > len(dists):
+        num_ret = len(dists)-1
+    ind = np.argpartition(dists, num_ret)[:num_ret]
+    ret = ''
+    for k in ind:
+        ret += str(stuids[k])+','
+    ret = ret[:-1]
+    return ret
+
+def calDist2(stu, target, weights):
     init()
     headers = ['Gender','Ethnicity','Major']
     dist = 0
@@ -108,8 +77,7 @@ def calDist(stu, target, weights):
         dist += len(s1.intersection(s2))
     return dist
 
-@app.route("/getSim/<int:id>/<string:class_name>/<int:num_ret>")
-def getNN(id, class_name, num_ret):
+def getNN2(id, class_name, num_ret):
     init()
     global data
     global num_students
@@ -129,7 +97,7 @@ def getNN(id, class_name, num_ret):
             courses = stu['Courses']
             if all(clas in courses for clas in class_list):
                 stuids.append(i)
-                dists.append(calDist(stu,target,weights_vec))
+                dists.append(calDist2(stu,target,weights_vec))
     if num_ret > len(dists):
         num_ret = len(dists)-1
     arr = np.array(dists)
@@ -141,7 +109,6 @@ def getNN(id, class_name, num_ret):
     return ret
 
 
-@app.route("/common/<int:id1>/<int:id2>")
 def commonTraits(id1, id2):
     init()
     global data
@@ -159,6 +126,18 @@ def commonTraits(id1, id2):
     ret = ret[:-1]
     return ret
 
+def calDist(stu, target):
+    init()
+    headers = ['Gender','Ethnicity','Major']
+    dist = 0
+    for head in headers:
+        if stu[head] != target[head]:
+            dist += 2
+    s1 = set(stu['Courses'])
+    s2 = set(target['Courses'])
+    dist += 16 - len(s1.intersection(s2))
+    return dist
+
 def commonTraitsVec(id1, id2):
     init()
     global data
@@ -171,10 +150,28 @@ def commonTraitsVec(id1, id2):
             lst.append(head)
     s1 = set(stu['Courses'])
     s2 = set(target['Courses'])
-    return list(s1.intersection(s2)) + lst
+    return list(s1.intersection(s2))+lst
 
+def convertDict(string):
+    string = string[1:-1]
+    lst = string.split(', ')
+    dict = {}
+    for cla in lst:
+        cla = cla[1:-1]
+        dict[cla] = 1
+    return dict
 
-@app.route("/addweights/<int:id>/<int:id_clicked>")
+def get_info(id):
+    init()
+    global data
+    lst = data[id]
+    headers = ['Name', 'Year', 'Email']
+    ret = ""
+    for he in headers:
+        ret += lst[he] + ","
+    ret = ret[:-1]
+    return ret
+
 def addWeights(id, id_clicked):
     init()
     global fb
@@ -186,11 +183,11 @@ def addWeights(id, id_clicked):
         fb.put('weights',str(id),weights)
     else:
         for i in commonTraitsVec(id,id_clicked):
-            if i in weights_vec:
-                weights_vec[i] += 1
-            else:
-                weights_vec[i] = 2
-        fb.put('weights',str(id),weights_vec)
-    return "done"
+            weights_vec[i] += 1
+        fb.put('weights', str(id), weights_vec)
 
+aut = firebase.FirebaseAuthentication('hY5kvBhsK4MZbShXIxeMEo0rOWyfL7LdW5TC95Od', 'wjq8g6@gmail.com')
+fb = firebase.FirebaseApplication('https://bridge-fb5ab.firebaseio.com', aut)
 
+for i in range(1500,1547):
+    fb.delete('students',str(i))

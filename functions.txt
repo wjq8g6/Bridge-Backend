@@ -1,0 +1,41 @@
+@app.route("/")
+def init():
+MUST RUN before any other function, basically inits firebase connection
+
+@app.route("/name/<int:id>")
+def get_name(id):
+returns name of the person with id
+
+@app.route("/email/<int:id>")
+def get_email(id):
+returns email of the person with id
+
+@app.route("/year/<int:id>")
+def get_year(id):
+returns year of the person with id
+
+@app.route("/gender/<int:id>")
+def get_gender(id):
+returns gender of the person with id
+
+@app.route("/major/<int:id>")
+def get_major(id):
+returns major of the person with id
+
+@app.route("/courses/<int:id>")
+def get_courses(id):
+returns courses of the person with id
+
+@app.route("/adduser/<string:info>/<string:classes>")
+def addStu(info,classes):
+Ex: https://get-knn.herokuapp.com/adduser/Jacky Chan,jchan@gmail.com,2016,male,Asian,Computer Science/CS 106A, CS 106B, CS 107, CS 221, CS 229, CS 103, CS 109, CS 224N
+Addes student to database
+
+@app.route("/getSim/<int:id>/<string:class_name>/<int:num_ret>")
+def getNN(id, class_name, num_ret):
+Returns string (list) of num_ret number of closest matches
+
+
+@app.route("/common/<int:id1>/<int:id2>")
+def commonTraits(id1, id2):
+Given id1 and id2 as ids of 2 students, return their common traits 
